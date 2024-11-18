@@ -1,4 +1,5 @@
 #Created by Zach Kalb, zachkalb@gmail.com
+#reach out on the discord: Redbox Tinkering
 import PyQt5.QtCore
 import PyQt5.QtGui as qtg
 import PyQt5.QtWidgets as qtw

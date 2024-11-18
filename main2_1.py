@@ -887,33 +887,32 @@ class Ui(qtw.QMainWindow):
         print("Flag coming in:", addNewFlag)
         addNewFlag = True
 
-        self.show_message_box("Please update the Product ID with an unused value otherwise the program will be unable to insert the value. Automatic value selection is in work")
+        #self.show_message_box("Please update the Product ID with an unused value otherwise the program will be unable to insert the value. Automatic value selection is in work")
+        self.start_long_task()
+        availibleKeys = find_available_product_keys(prof_file_path)
+        self.progress_dialog.close()
+        self.selectType.exec_()
+        print("selection: ", self.selectType.selection)
+        if self.selectType.selection == 1:
+            print("selection: DVD")
+            self.productIDdb.setText(str(availibleKeys["DVDProductID"]))
 
-        #self.find_available_product_keys(prof_file_path)
+        elif self.selectType.selection == 2:
+            print("selection: BR")
+            self.productIDdb.setText(str(availibleKeys["BRProductID"]))
 
-        #self.selectType.exec_()
-        #print("selection: ", self.selectType.selection)
-        #if self.selectType.selection == 1:
-        #    print("selection: DVD")
-        #    print("Key: ", availibleKeys)
-        #    self.productIDdb.setText(str())
+        elif self.selectType.selection == 3:
+            print("selection: 4K")
+            self.productIDdb.setText(str(availibleKeys["4KProductID"]))
 
-        #elif self.selectType.selection == 2:
-        #    print("selection: BR")
-        #    self.productIDdb.setText(str())
-
-        #elif self.selectType.selection == 3:
-        #    print("selection: 4K")
-        #    self.productIDdb.setText(str())
-
-        #else:
-        #    return
+        else:
+            return
 
         print("product Template Curently: ", product_Template)
         self.reset_genres()
         self.getRating()
 
-        self.productIDdb.setText(str(product_Template["product_id"]))
+        #self.productIDdb.setText(str(product_Template["product_id"]))
         stars_List = product_Template["starring"]
         image_file = product_Template["image_file"]
         print("Stars: ", stars_List)
@@ -940,7 +939,8 @@ class Ui(qtw.QMainWindow):
                     itemg.setCheckState(qtc.Qt.Checked)
                     break
                 else:
-                    print("FAIL")
+                    test = 1
+                    #print("FAIL")
 
 
 
@@ -1349,80 +1349,6 @@ class Ui(qtw.QMainWindow):
         appInv = newSN_Hex + titleID_Hex + statusCode_Hex + rentalCount_Hex
 
         return appInv
-    
-    def find_available_product_keys(seldf, db_file ,product_group_table="ProductGroup", product_catalog_table="ProductCatalog"):
-        global availibleKeys
-        print("DB File: ", db_file)
-
-        try:
-            # Open the database connection
-            connection_string = f"Data Source={db_file}"
-            connection = VistaDBConnection(connection_string)
-            connection.Open()
-            print("post connection open")
-
-            # Query used keys from ProductGroup table
-            usedgroup_keys = []
-            command = connection.CreateCommand()
-            command.CommandText = f"SELECT [Key] FROM {product_group_table}"
-            reader = command.ExecuteReader()
-        
-            while reader.Read():
-                key = int(reader["Key"])
-                if 200000 <= key <= 299999:
-                    usedgroup_keys.append(key)
-            reader.Close()
-
-            # Query used keys from ProductCatalog table
-            usedproduct_keys = []
-            command.CommandText = f"SELECT [Key] FROM {product_catalog_table}"
-            reader = command.ExecuteReader()
-        
-            while reader.Read():
-                key_value = reader["Key"]
-                # Handle null values if necessary
-                if key_value != DBNull.Value:
-                    usedproduct_keys.append(int(key_value))
-            reader.Close()
-            
-
-            # Separate used product keys into different ranges
-            usedproduct_keys_range1 = [k for k in usedproduct_keys if 300000 <= k <= 399999]
-            usedproduct_keys_range2 = [k for k in usedproduct_keys if 400000 <= k <= 499999]
-            usedproduct_keys_range3 = [k for k in usedproduct_keys if 900000 <= k <= 999999]
-            
-
-            # Find available keys
-            for key in range(200000, 300000):
-                if key not in usedgroup_keys:
-                    suffix = key % 1000
-                    print(key)
-
-                    # Check if suffix exists in any product ranges
-                    matching_range1 = [k for k in usedproduct_keys_range1 if k % 1000 == suffix]
-                    matching_range2 = [k for k in usedproduct_keys_range2 if k % 1000 == suffix]
-                    matching_range3 = [k for k in usedproduct_keys_range3 if k % 1000 == suffix]
-                    
-
-                    # If no matching keys in ranges, return the available key set
-                    if not matching_range1 and not matching_range2 and not matching_range3:
-                        result = {
-                            "ProductGroupID": key,
-                            "DVDProductID": 300000 + suffix,
-                            "BRProductID": 400000 + suffix,
-                            "4KProductID": 900000 + suffix,
-                        }
-                    availibleKeys = result
-                    print(result)
-
-            print("No available keys found.")
-    
-        except Exception as e:
-            print(f"Error: {e}")
-    
-        finally:
-            if connection.State == 1:  # 1 corresponds to ConnectionState.Open
-                connection.Close()
 
     def show_message_box(self, msgString):
         # Create a message box
@@ -1433,7 +1359,71 @@ class Ui(qtw.QMainWindow):
         msg.setStandardButtons(qtw.QMessageBox.Ok)
         msg.exec_()
     
+def find_available_product_keys(db_file, product_group_table="ProductGroup", product_catalog_table="ProductCatalog"):
+    try:
+        # Open the database connection
+        connection_string = f"Data Source={db_file}"
+        connection = VistaDBConnection(connection_string)
+        connection.Open()
+
+        # Query used keys from ProductGroup table
+        usedgroup_keys = []
+        command = connection.CreateCommand()
+        command.CommandText = f"SELECT [Key] FROM {product_group_table}"
+        reader = command.ExecuteReader()
+        
+        while reader.Read():
+            key = int(reader["Key"])
+            if 200000 <= key <= 299999:
+                usedgroup_keys.append(key)
+        reader.Close()
+
+        # Query used keys from ProductCatalog table
+        usedproduct_keys = []
+        command.CommandText = f"SELECT [Key] FROM {product_catalog_table}"
+        reader = command.ExecuteReader()
+        
+        while reader.Read():
+            key_value = reader["Key"]
+            # Handle null values if necessary
+            if key_value != DBNull.Value:
+                usedproduct_keys.append(int(key_value))
+        reader.Close()
+
+        # Separate used product keys into different ranges
+        usedproduct_keys_range1 = [k for k in usedproduct_keys if 300000 <= k <= 399999]
+        usedproduct_keys_range2 = [k for k in usedproduct_keys if 400000 <= k <= 499999]
+        usedproduct_keys_range3 = [k for k in usedproduct_keys if 900000 <= k <= 999999]
+
+        # Find available keys
+        for key in range(200000, 300000):
+            if key not in usedgroup_keys:
+                suffix = key % 1000
+
+                # Check if suffix exists in any product ranges
+                matching_range1 = [k for k in usedproduct_keys_range1 if k % 1000 == suffix]
+                matching_range2 = [k for k in usedproduct_keys_range2 if k % 1000 == suffix]
+                matching_range3 = [k for k in usedproduct_keys_range3 if k % 1000 == suffix]
+
+                # If no matching keys in ranges, return the available key set
+                if not matching_range1 and not matching_range2 and not matching_range3:
+                    result = {
+                        "ProductGroupID": key,
+                        "DVDProductID": 300000 + suffix,
+                        "BRProductID": 400000 + suffix,
+                        "4KProductID": 900000 + suffix,
+                    }
+                    return result
+
+        print("No available keys found.")
     
+    except Exception as e:
+        print(f"Error: {e}")
+    
+    finally:
+        if connection.State == 1:  # 1 corresponds to ConnectionState.Open
+            connection.Close()
+   
 
 app = qtw.QApplication(sys.argv)
 setupDialog = setupDialog()

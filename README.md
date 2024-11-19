@@ -78,13 +78,9 @@ Then activate the environment:
   ```sh
   virt/Scripts/activate.ps1
   ```
-Once Activated, install the following dependencies:
+Once Activated, install the dependencies using the requirements file:
   ```sh
-  pip install PyQt5
-  
-  pip install pythonnet
-  
-  pip install slpp
+  pip install -r requirements.txt
   ```
   
   You can then run the main application: 

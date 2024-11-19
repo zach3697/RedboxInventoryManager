@@ -129,6 +129,10 @@ You should then add the serial number association to the inventry file
 - [ ] Incorporate print functionality for labels
 - [ ] Add option to move the selected image to the correct directory on the kiosk automatically
 - [ ] Add support for grouping products (ie having one title, but availibe in blu-ray, DVD, 4k etc)
+- [ ] Add support for direct IMDb integration when adding movies
+
+Longterm:
+- [ ] Add remote feature (application, web, etc) to allow management from remote system without having to move files
 
 
 See the [open issues](https://github.com/othneildrew/Best-README-Template/issues) for a full list of proposed features (and known issues).

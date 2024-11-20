@@ -88,6 +88,13 @@ Once Activated, install the dependencies using the requirements file:
   python main2_1.py 
   ```
 
+  If you wish to generate an executable: 
+  ```sh
+  pip install pyinstaller
+
+  pyinstaller -F --add-data "assets/Redbox.ProductLookupCatalog.dll;assets" --add-data "assets/VistaDB.NET20.dll;assets" -w --icon=images/redboxTinkering.ico --name="Inventory Manager" main2_1.py
+  ```
+
 ### Prerequisites (Production)
 
 After downloading the files, you can run the main executable directly and start configuring the program:

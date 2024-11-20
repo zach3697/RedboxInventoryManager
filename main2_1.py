@@ -500,7 +500,7 @@ class ContentTypeDialog(qtw.QDialog):
 class Ui(qtw.QMainWindow):
     def __init__(self):
         super(Ui, self).__init__()
-        uic.loadUi('mainV1_2.ui', self)
+        uic.loadUi('mainWindow.ui', self)
 
         #ASSIGN BUTTONS TO OBJECTS
         self.addToInvButton = self.findChild(qtw.QPushButton, 'addToInventory') # Find the button
@@ -594,13 +594,19 @@ class Ui(qtw.QMainWindow):
         self.start_long_task()
         self.load_json_data()
 
-        current_directory = os.getcwd()
-        current_directory = current_directory.replace('\\', '/')
-        print("Direct: ", current_directory)
+        # Get the path to the current directory or the temporary folder if running from an EXE
+        if getattr(sys, 'frozen', False):
+            # If running as an EXE, use the _MEIPASS directory
+            current_directory = sys._MEIPASS
+        else:
+            # If running as a script, use the current working directory
+            current_directory = os.getcwd()
+
+            #current_directory = current_directory.replace('\\', '/')
 
         try:
             global Archive
-            clr.AddReference(current_directory+redboxDLL)
+            clr.AddReference(os.path.join(current_directory, "assets",redboxDLL))
             from Redbox.ProductLookupCatalog import Archive
         
         except:
@@ -610,7 +616,7 @@ class Ui(qtw.QMainWindow):
         try:
             global VistaDBConnection
             # Load the VistaDB DLL
-            clr.AddReference(current_directory+vistaDB_DLL)
+            clr.AddReference(os.path.join(current_directory, "assets", vistaDB_DLL))
 
             # Import the VistaDB namespaces
             from VistaDB.Provider import VistaDBConnection

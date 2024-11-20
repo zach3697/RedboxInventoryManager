@@ -29,7 +29,11 @@
    </size>
   </property>
   <property name="windowTitle">
-   <string>Form</string>
+   <string>Initial Setup</string>
+  </property>
+  <property name="windowIcon">
+   <iconset>
+    <normaloff>images/redboxTinkering.ico</normaloff>images/redboxTinkering.ico</iconset>
   </property>
   <layout class="QFormLayout" name="formLayout">
    <item row="0" column="0" colspan="2">

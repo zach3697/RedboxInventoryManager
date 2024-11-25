@@ -707,7 +707,7 @@ class Ui(qtw.QMainWindow):
         #print("unencoded: ", title_List[titleIndx])
         tempTitle = product_Template.copy()
 
-        tempTitle["product_id"] = self.productIDdb.text()
+        tempTitle["product_id"] = int(self.productIDdb.text())
         tempTitle["stars"] = json_config_data.get("starsDefault",1)
         tempTitle["running_time"] = self.runTime.text()
         tempTitle["long_name"] = self.longNameTextBox.text()

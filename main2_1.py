@@ -60,7 +60,7 @@ product_Template = {
     "sell_thru": True,
     "sell_thru_new": False,
     "box_office_gross": 1,
-    "directors": set(),
+    "directors": { },
     "coming_soon_days": 14,
     "sort_date": "20240702055300",
     "national_street_date": "20241001000000",
@@ -716,13 +716,13 @@ class Ui(qtw.QMainWindow):
         tempTitle["starring"] = stars_List
         tempTitle["image_file"] = image_file
         tempTitle["description"] = self.descriptiondb.toPlainText()
-        tempTitle["release_date"] = json_config_data.get("release_date_Default",20241010000000)
+        tempTitle["release_date"] = json_config_data.get("release_date_Default","20241010000000")
         tempTitle["box_office_gross"] = json_config_data.get("box_office_gross_Default",0.0)
         tempTitle["coming_soon_days"] = json_config_data.get("coming_soon_days_Default",1)
-        tempTitle["sort_date"] = json_config_data.get("sort_date_Default",20240702055300)
-        tempTitle["national_street_date"] = json_config_data.get("national_street_date_Default",20241001000000)
-        tempTitle["merchandise_date"] = json_config_data.get("merchandise_date_Default", 20241010000000)
-        tempTitle["redbox_plus_eligible_date"] = json_config_data.get("redbox_plus_eligible_date_Default", 20241010000000)
+        tempTitle["sort_date"] = json_config_data.get("sort_date_Default","20240702055300")
+        tempTitle["national_street_date"] = json_config_data.get("national_street_date_Default","20241001000000")
+        tempTitle["merchandise_date"] = json_config_data.get("merchandise_date_Default", "20241010000000")
+        tempTitle["redbox_plus_eligible_date"] = json_config_data.get("redbox_plus_eligible_date_Default", "20241010000000")
 
         genreIDs = self.get_checked_items()
         tempTitle["genres"].clear()
@@ -744,6 +744,7 @@ class Ui(qtw.QMainWindow):
                 break
 
         part1 = str(lua.encode(tempTitle))
+        print("Pre formatted entry: ", part1)
         part1 = part1.replace('\'', '\'\'') #Sometimes the description has a single ' and causes issues with the SQL Query so replacing with '' to fix it
         part1 = part1.replace('[\"', '') #Getting rid of brackets and quotes around variable names
         part1 = part1.replace('\"]', '') #Getting rid of brackets and quotes around variable names
@@ -1198,7 +1199,6 @@ class Ui(qtw.QMainWindow):
         self.load_inv_data()
         self.progress_dialog.close()
         self.show_message_box("add to inventory complete")
-
     
 
     def load_inv_data(self):

@@ -342,6 +342,17 @@ class setupDialog(qtw.QWidget):
         self.coverDir = self.findChild(qtw.QLineEdit, 'coverLoc') 
 
 
+    def start_long_task(self):
+        # Create and configure the progress dialog
+        self.progress_dialog = qtw.QProgressDialog("Processing...", None, 0, 0, self)
+        self.progress_dialog.setWindowModality(qtc.Qt.WindowModal)
+        self.progress_dialog.setCancelButton(None)
+        self.progress_dialog.setWindowTitle("Please Wait")
+        self.progress_dialog.setValue(50)
+        # Simulate a long-running task
+        self.progress_dialog.show()
+
+
     def open_file_dialog(self, jsonLocation: str, fileSelectionMsg: str):
         # Open a file dialog with a filter for .data files
         options = qtw.QFileDialog.Options()
@@ -403,6 +414,9 @@ class setupDialog(qtw.QWidget):
 
     def saveSettings(self):
 
+        #Show wait Dialog
+        self.start_long_task()
+
         #SETUP TEMP STORAGE VARIABLES
         profFile = ""
         invFile = ""
@@ -428,6 +442,7 @@ class setupDialog(qtw.QWidget):
                 # Read the source file and write to the destination
                 while chunk := fsrc.read(1024):  # Read 1024 bytes at a time
                     fdst.write(chunk)
+            self.progress_dialog.close()
             Ui.show_message_box(Ui, "Setting Saved! Restart the application to load the main window.")
             sys.exit()
         else:

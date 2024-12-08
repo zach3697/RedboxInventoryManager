@@ -435,15 +435,15 @@ class setupDialog(qtw.QWidget):
 
 
 class ContentTypeDialog(qtw.QDialog):
-    def __init__(self):
-        super().__init__()
+    def __init__(self, parent=None):
+        super().__init__(parent)
 
         self.selection = 0
 
         # Set up the dialog window
         self.setWindowTitle("Select Content Type")
         self.setGeometry(100, 100, 300, 150)
-        self.center()
+        #self.center()
 
         # Create layout
         layout = qtw.QVBoxLayout()
@@ -469,6 +469,25 @@ class ContentTypeDialog(qtw.QDialog):
 
         # Set dialog layout
         self.setLayout(layout)
+
+        # Center the dialog on the parent window
+        self.center_on_parent()
+
+    def center_on_parent(self):
+        if self.parent():
+            # Get parent geometry
+            parent_geometry = self.parent().geometry()
+        
+            # Calculate center point of parent
+            parent_center = parent_geometry.center()
+        
+            # Get dialog's geometry
+            dialog_geometry = self.geometry()
+        
+            # Move dialog to center of parent
+            dialog_geometry.moveCenter(parent_center)
+            self.setGeometry(dialog_geometry)
+
 
     # Define actions for each button
     def handle_dvd(self):
@@ -500,7 +519,7 @@ class ContentTypeDialog(qtw.QDialog):
 class Ui(qtw.QMainWindow):
     def __init__(self):
         super(Ui, self).__init__()
-        uic.loadUi('mainWindow.ui', self)
+        uic.loadUi('mainWindowV2.1.ui', self)
 
         #ASSIGN BUTTONS TO OBJECTS
         self.addToInvButton = self.findChild(qtw.QPushButton, 'addToInventory') # Find the button
@@ -512,7 +531,7 @@ class Ui(qtw.QMainWindow):
         self.loadCover = self.findChild(qtw.QPushButton, 'loadImgBtn') # Find the button
         self.viewDiskSN = self.findChild(qtw.QPushButton, 'viewDiskSN') # Find the button
         self.genLabel = self.findChild(qtw.QPushButton, 'generateLabelsBtn') # Find the button
-        self.printPrevLabel = self.findChild(qtw.QPushButton, 'printPreviewBtn') # Find the button
+        self.printPDFBtn = self.findChild(qtw.QPushButton, 'printPDFBtn') # Find the button
         self.printLabel = self.findChild(qtw.QPushButton, 'printLabelBtn') # Find the button
 
         #INSERT HANDLERS FOR BUTTONS
@@ -521,11 +540,10 @@ class Ui(qtw.QMainWindow):
         self.searchTitleBtn.clicked.connect(self.searchTitle)
         self.saveBtn.clicked.connect(self.saveProfile)
         self.resetBtn.clicked.connect(self.resetInputs)
-        self.viewDiskSN.clicked.connect(self.getSNList)
         self.starBtn.clicked.connect(self.configNameListEditor)
         self.addNew.clicked.connect(self.on_add_new)
         self.genLabel.clicked.connect(lambda: self.show_message_box("Feature Coming Soon!"))
-        self.printPrevLabel.clicked.connect(lambda: self.show_message_box("Feature Coming Soon!"))
+        self.printPDFBtn.clicked.connect(lambda: self.show_message_box("Feature Coming Soon!"))
         self.printLabel.clicked.connect(lambda: self.show_message_box("Feature Coming Soon!"))
         
 
@@ -572,7 +590,6 @@ class Ui(qtw.QMainWindow):
         self.githubLink = self.findChild(qtw.QAction, 'actionGithub')
         self.insertDiskSN = self.findChild(qtw.QAction, 'actionInsert_Disk_SN')
         self.searchDiskSN = self.findChild(qtw.QAction, 'actionSearch_By_Disk_SN')
-        self.about = self.findChild(qtw.QAction, 'actionAbout')
 
         #INSERT HANDLERS FOR TRIGGERED ACTIONS
         self.ConfigEditor = ConfigEditor(json_config)
@@ -580,11 +597,10 @@ class Ui(qtw.QMainWindow):
         self.exit.triggered.connect(self.close)
         self.insertDiskSN.triggered.connect(lambda: self.show_message_box("Feature Coming Soon!"))
         self.githubLink.triggered.connect(lambda: self.show_message_box("Feature Coming Soon!"))
-        self.about.triggered.connect(lambda: self.show_message_box("Feature Coming Soon!"))
         self.searchDiskSNWindow = SearchWindow()
         self.searchDiskSN.triggered.connect(self.searchDiskSNWindow.show)
 
-        self.selectType = ContentTypeDialog()
+        self.selectType = ContentTypeDialog(self)
 
 
         #INSERT HANDLERS
@@ -898,7 +914,8 @@ class Ui(qtw.QMainWindow):
         self.start_long_task()
         availibleKeys = find_available_product_keys(prof_file_path)
         self.progress_dialog.close()
-        self.selectType.exec_()
+        #self.selectType.exec_()
+        self.selectType.show()
         print("selection: ", self.selectType.selection)
         if self.selectType.selection == 1:
             print("selection: DVD")

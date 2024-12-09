@@ -577,7 +577,6 @@ class Ui(qtw.QMainWindow):
         self.genres = self.findChild(qtw.QComboBox, 'genresComboBox')
 
         #ASSIGN SPIN BOX TO OBJECTS
-        self.addQTYBox = self.findChild(qtw.QSpinBox, 'addQTY')
         
         #ASSIGN TEXT EDITS TO OBJECTS
         self.descriptiondb = self.findChild(qtw.QTextEdit, 'description')
@@ -1194,43 +1193,54 @@ class Ui(qtw.QMainWindow):
         self.progress_dialog.show()
 
 
-    def find_index_for_entry(self,  inv_file_path: str, snValue: str):
+    def find_index_for_entry(self, inv_file_path: str, snValue: str):
         snValueInt = int(snValue)
         while True:
             findSN_Hex = snValueInt.to_bytes(8, 'little')
-            print("Checking if this SN is availible: ", findSN_Hex.hex())
+            print("Checking if this SN is available: ", findSN_Hex.hex())
+            
+            # Find the position of the serial number in the file
             position = self.find_bytes_in_file(inv_file_path, findSN_Hex, 8)
+            
             if position == -1:
-                x = snValueInt - 1
-                findSN_Hex = x.to_bytes(8, 'little')
-                position = self.find_bytes_in_file(inv_file_path, findSN_Hex, 8)
-                break
+                # If the serial number is not found, decrement and retry
+                print(f"Serial number {snValueInt} not found, decrementing...")
+                snValueInt -= 1
             else:
-                i += 1
-        print("Index Position: ", position+18)
-        return position+18
+                # Found the serial number
+                print("Index Position: ", position + 18)
+                return position + 18
+
 
 
 
     def add_to_inv(self):
         self.start_long_task()
         print(inv_file_path)
-        addValue = self.addQTYBox.value()
+        addValue = 1 #Bug found with adding more then 1 at a time. Bulk adding isnt realistic for home use so this is not a priority bug
         productIDValue = self.titleTextBox.text()
         snValue = self.nextSNTextBox.text()
         if addValue and productIDValue and snValue:
             for x in range (0, addValue):
+                print("X is: ", x)
                 hexLine = self.createInventoryEntry(int(snValue)+x, int(productIDValue), 0,0)
                 
                 insert_position = self.find_index_for_entry(inv_file_path, snValue)
 
                 self.insert_bytes_in_file(inv_file_path, insert_position, hexLine)
+
+                self.load_inv_data()
+
+                self.show_message_box("Add to inventory complete")
+
+
         else:
             print("Missing Value(s)")
+            self.show_message_box("Missing Values. Please verify you provided all the inputs!")
 
-        self.load_inv_data()
+        
         self.progress_dialog.close()
-        self.show_message_box("add to inventory complete")
+        
     
 
     def load_inv_data(self):
@@ -1240,11 +1250,13 @@ class Ui(qtw.QMainWindow):
         while i < end_SN:
             inventory = connection.Find(str(i))
             print("Checking SN: ", i)
+            print("Inventory:", inventory)
             try:
                 value = inventory.get_TitleId()
                 print("Title ID: ", value)
                 i += 1
-            except AttributeError:
+            except Exception as error:
+                print("Error: ", error)
                 print("SN not yet used")
                 self.nextSNTextBox.setText(str(i))
                 connection.Dispose()

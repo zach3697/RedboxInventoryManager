@@ -460,21 +460,7 @@
                 </property>
                </widget>
               </item>
-              <item row="2" column="0">
-               <widget class="QLabel" name="qtyToAddLabel">
-                <property name="text">
-                 <string>Qty to Add: </string>
-                </property>
-               </widget>
-              </item>
-              <item row="2" column="1">
-               <widget class="QSpinBox" name="addQTY">
-                <property name="minimum">
-                 <number>1</number>
-                </property>
-               </widget>
-              </item>
-              <item row="2" column="2">
+              <item row="1" column="2">
                <widget class="QPushButton" name="addToInventory">
                 <property name="sizePolicy">
                  <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
@@ -513,8 +499,8 @@
         <rect>
          <x>0</x>
          <y>0</y>
-         <width>1006</width>
-         <height>580</height>
+         <width>356</width>
+         <height>145</height>
         </rect>
        </property>
        <attribute name="label">

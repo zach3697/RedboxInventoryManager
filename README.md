@@ -130,9 +130,9 @@ You should then add the serial number association to the inventry file
 <!-- ROADMAP -->
 ## Roadmap
 
-- [*] Fix screen sizing to work on current redbox screen resolution of 1024x768
+- [X] Fix screen sizing to work on current redbox screen resolution of 1024x768
 - [ ] Add better logging capability
-- [*] Add ability for product id to be auto generated
+- [X] Add ability for product id to be auto generated
 - [ ] Incorporate print functionality for labels
 - [ ] Add option to move the selected image to the correct directory on the kiosk automatically
 - [ ] Add support for grouping products (ie having one title, but availibe in blu-ray, DVD, 4k etc)

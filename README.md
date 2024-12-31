@@ -92,7 +92,7 @@ Once Activated, install the dependencies using the requirements file:
   ```sh
   pip install pyinstaller
 
-  pyinstaller -F --add-data "assets/Redbox.ProductLookupCatalog.dll;assets" --add-data "assets/VistaDB.NET20.dll;assets" -w --icon=images/redboxTinkering.ico --name="Inventory Manager" main2_1.py
+  pyinstaller -F --add-data "assets/Redbox.ProductLookupCatalog.dll;assets" --add-data "assets/VistaDB.NET20.dll;assets" -w --icon=images/redboxTinkering.ico --name="Inventory Manager" main.py
   ```
 
 ### Prerequisites (Production)
